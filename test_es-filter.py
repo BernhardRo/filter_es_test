@@ -34,14 +34,52 @@ ea=[werte[0]]
 p=0.2
 r=0.4
 for i in range(len(werte)-1):
-    a=(ev[i]+p*(werte[i+1]-ev[i]))
-    ev.append(int(a))
-    a=a+r*((werte[i]-ev[i])+(werte[i+1]-a))/2 #gut1 mit p=0.7, r=0.6, stark gedämpft mit p=0,2, r = 0,4
-    #a=a+(1-p)*(werte[i+1]-a) #gut2
+    value = werte[i+1]
+    a=(ev[i]+p*(value-ev[i]))
+    ev.append(a)
+    a=a+r*((werte[i]-ev[i])+(value-a))/2 #gut1 mit p=0.7, r=0.6, stark gedämpft mit p=0,2, r = 0,4
+    #a=a+(1-p)*(value-a) #gut2
 
     ea.append(int(a))
+
+#ESEL implementation
+#double smooth = this.value;
+
+#double lastSmooth = SP.getInt("readingSmooth",last*1000)/1000;
+#double factor = SP.getDouble("smooth_factor",0.3);
+#double correction = SP.getDouble("correction_factor",0.5);
+#int lastRaw = SP.getInt("lastReadingRaw", value);
+
+#SP.putInt("lastReadingRaw", this.value);
+
+#double a=lastSmooth+(factor*(this.value-lastSmooth));
+#smooth=a+correction*((lastRaw-lastSmooth)+(this.value-a))/2;
+
+#SP.putInt("readingSmooth",(int)Math.round(smooth*1000));
+
+#if(this.value > SP.getInt("lower_limit",65)){
+#      this.value = (int)Math.round(smooth);
+#}
+
+el=[werte[0]]
+factor=0.3
+correction=0.5
+
+lastSmooth = werte[0]
+lastRaw = werte[0]
+
+for i in range(len(werte)-1):
+    value = werte[i+1]
+    a = lastSmooth + (factor * (value-lastSmooth))
+    smooth=a+(correction*((lastRaw-lastSmooth)+(value-a))/2)
+    lastSmooth = smooth
+    lastRaw = value
+    if value > 65:
+        value = smooth
+    el.append(int(value))
+    
  
-label=['origin','filtered, p=' + str(p),'15 min delta','exp (' + str(p)+ ') + corr (' + str(r)+ ')']
+label=['origin','filtered, p=' + str(p),'15 min delta','exp (' + str(p)+ ') + corr (' + str(r)+ ')',"ESEL"]
 
 
 #with open(path + 'out.csv', 'w') as csvfile:
@@ -52,9 +90,10 @@ label=['origin','filtered, p=' + str(p),'15 min delta','exp (' + str(p)+ ') + co
 
 
 plt.plot(x,werte, linestyle='solid', marker='.', label=label[0])
-plt.plot(x,fc, linestyle='solid', marker='.', label=label[1])
-plt.plot(x,av, linestyle='solid', marker='.', label=label[2])
+#plt.plot(x,fc, linestyle='solid', marker='.', label=label[1])
+#plt.plot(x,av, linestyle='solid', marker='.', label=label[2])
 plt.plot(x,ea, linestyle='solid', marker='.', label=label[3])
+plt.plot(x,el, linestyle='solid', marker='.', label=label[4])
 plt.legend()
 plt.show()
 plt.show()
