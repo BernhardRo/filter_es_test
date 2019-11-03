@@ -6,15 +6,9 @@ import getData
 #path = "D:\\Dokumente\\VisualStudioCode\\nightscout\\filter_es_test\\"
 #daten=np.loadtxt(path + "Daten.txt", dtype='unicode_')
 
-data = getData.get_from_nightscout(150)
-daten = []
-
-for x in data:
-    daten.append(x['sgv'])
-
+daten = getData.get_sgv_from_ns(150)
 
 werte=np.array(daten, dtype=int)
-
 
 x=np.zeros_like(werte)
 for i in range(len(x)):
@@ -91,10 +85,6 @@ for i in range(len(werte)-1):
     dw = value - descent_factor*(value-min(raw,value))
     df.append(int(dw))
     
- 
-label=['origin','filtered, p=' + str(p),'15 min delta','exp (' + str(p)+ ') + corr (' + str(r)+ ')',"ESEL"]
-
-
 #with open(path + 'out.csv', 'w') as csvfile:
 #    csvwriter = csv.writer(csvfile, delimiter=';', quotechar='"',lineterminator='\n', quoting=csv.QUOTE_MINIMAL)
 #    csvwriter.writerow([label[0], label[1] , label[2], label[3]])
@@ -102,11 +92,11 @@ label=['origin','filtered, p=' + str(p),'15 min delta','exp (' + str(p)+ ') + co
 #        csvwriter.writerow([werte[i], fc[i] , av[i], ea[i]])
 
 
-plt.plot(x,werte, linestyle='solid', marker='.', label=label[0])
-#plt.plot(x,fc, linestyle='solid', marker='.', label=label[1])
-#plt.plot(x,av, linestyle='solid', marker='.', label=label[2])
-plt.plot(x,df, linestyle='solid', marker='.', label="downward ESEL")
-plt.plot(x,el, linestyle='solid', marker='.', label="ESEL")
+plt.plot(x,werte, linestyle='solid', marker='.', label='origin')
+#plt.plot(x,fc, linestyle='solid', marker='.', label='filtered, p=' + str(p))
+#plt.plot(x,av, linestyle='solid', marker='.', label='15 min delta')
+plt.plot(x,el, linestyle='solid', marker='.', label="ESEL, factor="+str(factor) + ' corr=' + str(correction))
+plt.plot(x,df, linestyle='solid', marker='.', label="downward ESEL, df="+str(descent_factor))
 plt.legend()
 plt.show()
 plt.show()

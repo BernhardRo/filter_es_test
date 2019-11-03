@@ -1,6 +1,3 @@
-import pymongo
-import pandas as pd
-import numpy as np
 import requests, json, hashlib, urllib, datetime
 from dateutil.parser import parse
 from secret import  NS_URL, NS_SECRET
@@ -8,6 +5,12 @@ from secret import  NS_URL, NS_SECRET
 NS_AUTHOR = "xDrip-NSEmulator"
 TIMEZONE = "Europe/Berlin"
 
+def get_sgv_from_ns(cnt):
+    data = get_from_nightscout(cnt)
+    result = []
+    for x in data:
+        result.append(x['sgv'])
+    return result
 
 def get_from_nightscout(cnt):
     	#last = requests.get(NS_URL + 'api/v1/treatments?count=1&find[eventType]='+urllib.parse.quote('Exercise'), headers={
